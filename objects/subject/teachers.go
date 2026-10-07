@@ -19,3 +19,9 @@ func (d *Database) UpdateTacher(id int, name string) error {
 
 	return sql.UpdateTeacher(d.ctx, d.conn, t)
 }
+
+func (d *Database) GetAllTeachers() ([]sql.Teacher, error) {
+	arr, err := sql.SelectAllTeachers(d.ctx, d.conn)
+
+	return arr, err
+}

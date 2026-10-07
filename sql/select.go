@@ -23,7 +23,7 @@ func Select(ctx context.Context, conn *pgx.Conn, id int) (Subject, error) {
 	return s, err
 }
 
-func SelectAll(ctx context.Context, conn *pgx.Conn) ([]Subject, error) {
+func SelectAllSubjects(ctx context.Context, conn *pgx.Conn) ([]Subject, error) {
 	sqlQuery := `
 	SELECT subjects.id, subjects.name, teachers.name FROM subjects
 	JOIN teachers ON teachers.id = subjects.teacher_id
@@ -53,4 +53,34 @@ func SelectAll(ctx context.Context, conn *pgx.Conn) ([]Subject, error) {
 	}
 
 	return subjects, err
+}
+
+func SelectAllTeachers(ctx context.Context, conn *pgx.Conn) ([]Teacher, error) {
+	sqlQuery := `
+	SELECT id, name FROM teachers
+	`
+
+	rows, err := conn.Query(ctx, sqlQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	teachers := make([]Teacher, 0)
+
+	for rows.Next() {
+		var t Teacher
+
+		err := rows.Scan(
+			&t.ID,
+			&t.Name,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		teachers = append(teachers, t)
+	}
+
+	return teachers, err
 }

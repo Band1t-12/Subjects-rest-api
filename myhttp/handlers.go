@@ -66,12 +66,35 @@ func (h *HTTPHandlers) HandleUpdateTeacher(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err := h.Database.UpdateTacher(id, request.Name); err != nil {
+		errDTO := CreateErrDTO(objects.ErrorTeacherNotFound)
+		http.Error(w, errDTO.ToString(), http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *HTTPHandlers) HandleGetAllTeachers(w http.ResponseWriter, r *http.Request) {
+	teachers, err := h.Database.GetAllSubjects()
+
+	if err != nil {
 		errDTO := CreateErrDTO(err)
 		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	b, err := json.MarshalIndent(teachers, "", "	")
+	if err != nil {
+		panic(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	_, err = w.Write(b)
+	if err != nil {
+		fmt.Println("Failed to write HTTP response!: ", err)
+		return
+	}
 }
 
 func (h *HTTPHandlers) HandleAddSubject(w http.ResponseWriter, r *http.Request) {
@@ -111,8 +134,8 @@ func (h *HTTPHandlers) HandleGetSubject(w http.ResponseWriter, r *http.Request) 
 	subject, err := h.Database.GetSubject(id)
 
 	if err != nil {
-		errDTO := CreateErrDTO(err)
-		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
+		errDTO := CreateErrDTO(objects.ErrorSubjectNotFound)
+		http.Error(w, errDTO.ToString(), http.StatusNotFound)
 		return
 	}
 
@@ -132,7 +155,6 @@ func (h *HTTPHandlers) HandleGetSubject(w http.ResponseWriter, r *http.Request) 
 
 func (h *HTTPHandlers) HandleGetAllSubjects(w http.ResponseWriter, r *http.Request) {
 	subjects, err := h.Database.GetAllSubjects()
-
 	if err != nil {
 		errDTO := CreateErrDTO(err)
 		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
@@ -175,8 +197,8 @@ func (h *HTTPHandlers) HandleUpdateSubject(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err = h.Database.UpdateSubject(id, request.Name, request.Teacher); err != nil {
-		errDTO := CreateErrDTO(err)
-		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
+		errDTO := CreateErrDTO(objects.ErrorSubjectNotFound)
+		http.Error(w, errDTO.ToString(), http.StatusNotFound)
 		return
 	}
 
@@ -191,8 +213,8 @@ func (h *HTTPHandlers) HandleDeleteSubject(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err := h.Database.DeleteSubject(id); err != nil {
-		errDTO := CreateErrDTO(err)
-		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		errDTO := CreateErrDTO(objects.ErrorSubjectNotFound)
+		http.Error(w, errDTO.ToString(), http.StatusNotFound)
 		return
 	}
 

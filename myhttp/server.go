@@ -27,6 +27,7 @@ func (s *HTTPServer) StartServer() error {
 	router.Path("/subjects/{id}").Methods("DELETE").HandlerFunc(s.HTTPHandlers.HandleDeleteSubject)
 	router.Path("/teachers").Methods("POST").HandlerFunc(s.HTTPHandlers.HandleAddTeacher)
 	router.Path("/teachers/{id}").Methods("PUT").HandlerFunc(s.HTTPHandlers.HandleUpdateTeacher)
+	router.Path("/teachers").Methods("GET").HandlerFunc(s.HTTPHandlers.HandleGetAllTeachers)
 
 	if err := http.ListenAndServe(":8080", LoggingMiddleware(router)); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {

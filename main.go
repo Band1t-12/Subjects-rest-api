@@ -5,13 +5,15 @@ import (
 	objects "StudyApi/objects/subject"
 	"StudyApi/sql"
 	"context"
+	"fmt"
 )
 
 func main() {
 	ctx := context.Background()
 	conn, err := sql.CheckConnection(ctx)
 	if err != nil {
-		panic(err)
+		fmt.Println("Failed to connect!")
+		return
 	}
 	db := objects.NewDatabase(ctx, conn)
 	httpHandlers := myhttp.NewHTTPHandlers(db)

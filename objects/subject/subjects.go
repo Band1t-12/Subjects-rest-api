@@ -25,7 +25,7 @@ func (d *Database) GetSubject(id int) (sql.Subject, error) {
 }
 
 func (d *Database) GetAllSubjects() ([]sql.Subject, error) {
-	subjects, err := sql.SelectAll(d.ctx, d.conn)
+	subjects, err := sql.SelectAllSubjects(d.ctx, d.conn)
 	return subjects, err
 }
 
