@@ -20,8 +20,62 @@ func NewHTTPHandlers(db *objects.Database) *HTTPHandlers {
 	}
 }
 
+func (h *HTTPHandlers) HandleAddTeacher(w http.ResponseWriter, r *http.Request) {
+	var request RequestTeacherDTO
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+
+	if err := request.Validation(); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Database.AddTeacher(request.Name); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *HTTPHandlers) HandleUpdateTeacher(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+	var request RequestTeacherDTO
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+
+	if err := request.Validation(); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Database.UpdateTacher(id, request.Name); err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
 func (h *HTTPHandlers) HandleAddSubject(w http.ResponseWriter, r *http.Request) {
-	var request RequestDTO
+	var request RequestSubjectDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		errDTO := CreateErrDTO(err)
@@ -106,7 +160,7 @@ func (h *HTTPHandlers) HandleUpdateSubject(w http.ResponseWriter, r *http.Reques
 		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
 		return
 	}
-	var request RequestDTO
+	var request RequestSubjectDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		errDTO := CreateErrDTO(err)

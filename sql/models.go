@@ -5,3 +5,8 @@ type Subject struct {
 	Name        string `json:"name"`
 	TeacherName string `json:"teacher_name"`
 }
+
+type Teacher struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}

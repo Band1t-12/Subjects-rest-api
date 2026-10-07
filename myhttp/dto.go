@@ -6,17 +6,29 @@ import (
 	"time"
 )
 
-type RequestDTO struct {
+type RequestSubjectDTO struct {
 	Name    string
 	Teacher string
 }
 
-func (r RequestDTO) Validation() error {
+type RequestTeacherDTO struct {
+	Name string
+}
+
+func (r RequestSubjectDTO) Validation() error {
 	if r.Name == "" {
 		return errors.New("subject name is empty!")
 	}
 	if r.Teacher == "" {
 		return errors.New("teacher name is empty!")
+	}
+
+	return nil
+}
+
+func (r RequestTeacherDTO) Validation() error {
+	if r.Name == "" {
+		return errors.New("subject name is empty!")
 	}
 
 	return nil

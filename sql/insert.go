@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func Insert(ctx context.Context, conn *pgx.Conn, s Subject) error {
+func InsertSubject(ctx context.Context, conn *pgx.Conn, s Subject) error {
 	var exists bool
 	var teacherID int
 	err := conn.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM teachers WHERE name = $1)`, s.TeacherName).Scan(&exists)
@@ -25,4 +25,15 @@ func Insert(ctx context.Context, conn *pgx.Conn, s Subject) error {
 
 	_, err = conn.Exec(ctx, `INSERT INTO subjects(name, teacher_id) VALUES($1, $2)`, s.Name, teacherID)
 	return err
+}
+
+func InsertTeacher(ctx context.Context, conn *pgx.Conn, t Teacher) error {
+	sqlQuery := `
+	INSERT INTO teachers(name)
+	VALUES($1)
+	`
+
+	_, err := conn.Exec(ctx, sqlQuery, t.Name)
+	return err
+
 }

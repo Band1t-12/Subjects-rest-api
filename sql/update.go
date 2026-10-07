@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func Update(ctx context.Context, conn *pgx.Conn, s Subject) error {
+func UpdateSubject(ctx context.Context, conn *pgx.Conn, s Subject) error {
 	var exists bool
 	err := conn.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM teachers WHERE name = $1)`, s.TeacherName).Scan(&exists)
 	if err != nil {
@@ -28,5 +28,16 @@ func Update(ctx context.Context, conn *pgx.Conn, s Subject) error {
 		return errors.New("Teacher Not Found!")
 	}
 
+	return err
+}
+
+func UpdateTeacher(ctx context.Context, conn *pgx.Conn, t Teacher) error {
+	sqlQuery := `
+	UPDATE teachers
+	SET name = $1
+	WHERE id = $2
+	`
+
+	_, err := conn.Exec(ctx, sqlQuery, t.Name, t.ID)
 	return err
 }

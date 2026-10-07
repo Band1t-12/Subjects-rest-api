@@ -8,13 +8,13 @@ import (
 )
 
 func (d *Database) AddSubject(name string, teacher_name string) error {
-	t := sql.Subject{
+	s := sql.Subject{
 		ID:          0,
 		Name:        name,
 		TeacherName: teacher_name,
 	}
 
-	err := sql.Insert(d.ctx, d.conn, t)
+	err := sql.InsertSubject(d.ctx, d.conn, s)
 	return err
 }
 
@@ -36,7 +36,7 @@ func (d *Database) UpdateSubject(id int, name string, teacherName string) error 
 		TeacherName: teacherName,
 	}
 
-	err := sql.Update(d.ctx, d.conn, t)
+	err := sql.UpdateSubject(d.ctx, d.conn, t)
 	return err
 }
 
