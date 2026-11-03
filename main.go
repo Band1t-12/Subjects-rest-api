@@ -12,7 +12,7 @@ func main() {
 	ctx := context.Background()
 	conn, err := sql.CheckConnection(ctx)
 	if err != nil {
-		fmt.Println("Failed to connect!")
+		fmt.Println(err)
 		return
 	}
 	db := objects.NewDatabase(ctx, conn)
