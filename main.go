@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	fmt.Println("Server started")
+
 	ctx := context.Background()
 	conn, err := sql.CheckConnection(ctx)
 	if err != nil {
