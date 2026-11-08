@@ -74,8 +74,39 @@ func (h *HTTPHandlers) HandleUpdateTeacher(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusCreated)
 }
 
+func (h *HTTPHandlers) HandleGetTeacher(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+
+	if err != nil {
+		errDTO := CreateErrDTO(err)
+		http.Error(w, errDTO.ToString(), http.StatusBadRequest)
+		return
+	}
+
+	teacher, err := h.Database.GetTeacher(id)
+
+	if err != nil {
+		errDTO := CreateErrDTO(objects.ErrorSubjectNotFound)
+		http.Error(w, errDTO.ToString(), http.StatusNotFound)
+		return
+	}
+
+	b, err := json.MarshalIndent(teacher, "", "	")
+	if err != nil {
+		panic(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	_, err = w.Write(b)
+	if err != nil {
+		fmt.Println("Failed to write HTTP response!: ", err)
+		return
+	}
+}
+
 func (h *HTTPHandlers) HandleGetAllTeachers(w http.ResponseWriter, r *http.Request) {
-	teachers, err := h.Database.GetAllSubjects()
+	teachers, err := h.Database.GetAllTeachers()
 
 	if err != nil {
 		errDTO := CreateErrDTO(err)

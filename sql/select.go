@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func Select(ctx context.Context, conn *pgx.Conn, id int) (Subject, error) {
+func SelectSubject(ctx context.Context, conn *pgx.Conn, id int) (Subject, error) {
 	var s Subject
 
 	sqlQuery := `
@@ -15,12 +15,28 @@ func Select(ctx context.Context, conn *pgx.Conn, id int) (Subject, error) {
 	WHERE subjects.id = $1
 	`
 
-	err := conn.QueryRow(ctx, sqlQuery, id).Scan(s.ID, s.Name, s.TeacherName)
+	err := conn.QueryRow(ctx, sqlQuery, id).Scan(&s.ID, &s.Name, &s.TeacherName)
 	if err != nil {
 		return Subject{}, err
 	}
 
 	return s, err
+}
+
+func SelectTeacher(ctx context.Context, conn *pgx.Conn, id int) (Teacher, error) {
+	var t Teacher
+
+	sqlQuery := `
+	SELECT t.id, t.name FROM teachers t
+	WHERE t.id = $1
+	`
+
+	err := conn.QueryRow(ctx, sqlQuery, id).Scan(&t.ID, &t.Name)
+	if err != nil {
+		return Teacher{}, err
+	}
+
+	return t, err
 }
 
 func SelectAllSubjects(ctx context.Context, conn *pgx.Conn) ([]Subject, error) {
