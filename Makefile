@@ -5,10 +5,10 @@ service-run:
 	@go run main.go
 
 service-deploy:
-	docker compose up -d application
+	@docker compose up -d --build application
 
 service-undeploy:
-	docker compose down application
+	@docker compose down application
 	
 migrate-up:
 	migrate -path migrations -database ${CONN_STRING} up
