@@ -19,7 +19,7 @@ func (d *Database) AddSubject(name string, teacher_name string) error {
 }
 
 func (d *Database) GetSubject(id int) (sql.Subject, error) {
-	subject, err := sql.Select(d.ctx, d.conn, id)
+	subject, err := sql.SelectSubject(d.ctx, d.conn, id)
 
 	return subject, err
 }
